@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "773015035941",
+    "project_id": "league-a380a",
+    "storage_bucket": "league-a380a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773015035941:android:07ceaa814baa1fe8649fcc",
+        "android_client_info": {
+          "package_name": "com.example.league"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773015035941-at04vh056rh4ilohuiufgeddcslb1ltt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.league",
+            "certificate_hash": "6e030b6d587376a2c49530b706543527fe88c165"
+          }
+        },
+        {
+          "client_id": "773015035941-k3fck4pqvatdsrdcgbgq2q0b3pko0btc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmcXX_21goggSUGQIrgdUIss3ntmNNZDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773015035941-k3fck4pqvatdsrdcgbgq2q0b3pko0btc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
