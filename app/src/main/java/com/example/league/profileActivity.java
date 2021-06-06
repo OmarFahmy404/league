@@ -22,10 +22,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class profileActivity extends AppCompatActivity {
     private String recevierleague;
-    private ImageView image;
+    private ImageView imageView;
     private TextView profileleaguename,profilelocation,profileprice,profileemail,profileusername,profilephone;
     private DatabaseReference userref;
     private static final int    REQUEST_CALL=1;
@@ -40,7 +41,7 @@ public class profileActivity extends AppCompatActivity {
 
         recevierleague=getIntent().getExtras().get("visite_league_details").toString();
 
-        image=findViewById(R.id.leagueimage);
+        imageView=findViewById(R.id.leagueimage);
         profilephone=findViewById(R.id.P);
         profileleaguename= findViewById(R.id.LN);
         profilelocation=findViewById(R.id.L);
@@ -60,12 +61,18 @@ public class profileActivity extends AppCompatActivity {
             {
                 if(snapshot.exists())
                 {
+                 //   String IMAGE=snapshot.child("image ").getValue().toString();
+
                     String LEAGUENAME=snapshot.child("league name").getValue().toString();
                     String LOCATION=snapshot.child("location").getValue().toString();
                     String USERNAME=snapshot.child("person name").getValue().toString();
                     String PHONE=snapshot.child("phone number").getValue().toString();
                     String PRICE=snapshot.child("price").getValue().toString();
                     String EMAIL=snapshot.child("email").getValue().toString();
+
+                    String image=snapshot.child("image").getValue().toString();
+                    Picasso.get().load(image).placeholder(R.drawable.add).into(imageView);
+
 
                     profileemail.setText(EMAIL);
                     profileleaguename.setText(LEAGUENAME);

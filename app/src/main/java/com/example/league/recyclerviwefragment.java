@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -156,11 +158,30 @@ leaguesviewholder.itemView.setOnClickListener(new View.OnClickListener() {
                         {
                             String Lname=snapshot.child("league name").getValue().toString();
                             String Locname=snapshot.child("location").getValue().toString();
+                            String image=snapshot.child("image").getValue().toString();
+
+
+                            leaguesviewholder.leaguesname.setText(Lname);
+                            leaguesviewholder.locations.setText(Locname);
+                            Picasso.get().load(image).placeholder(R.drawable.add).into(leaguesviewholder.profimage);
+
+                        } else {
+                            String Lname = snapshot.child("league name").getValue().toString();
+                            String Locname = snapshot.child("location").getValue().toString();
+
+                            //////////////////////////////////////////////////////////////////////////////////////
+
+
 
                             leaguesviewholder.leaguesname.setText(Lname);
                             leaguesviewholder.locations.setText(Locname);
 
+
+
+
+
                         }
+
                     }
 
                     @Override
@@ -185,11 +206,15 @@ leaguesviewholder.itemView.setOnClickListener(new View.OnClickListener() {
     public static class leaguesviewholder extends RecyclerView.ViewHolder
     {
         TextView leaguesname,locations;
+        ImageView profimage;
+
         public leaguesviewholder(@NonNull View itemView) {
             super(itemView);
 
             leaguesname=itemView.findViewById(R.id.league_name);
             locations=itemView.findViewById(R.id.location_name);
+            profimage=itemView.findViewById(R.id.my_image);
+
         }
     }
 }

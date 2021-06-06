@@ -1,19 +1,31 @@
 package com.example.league;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 
@@ -23,7 +35,10 @@ public class ADD_LEAGUE extends AppCompatActivity {
     FirebaseDatabase rootnode;
     DatabaseReference reference;
     FirebaseDatabase database;
-    private DatabaseReference myRef;
+    ImageView imageView;
+    private DatabaseReference myRef=FirebaseDatabase.getInstance().getReference().child("new league");
+    StorageReference storageReference= FirebaseStorage.getInstance().getReference();
+    private Uri imageuri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +54,14 @@ public class ADD_LEAGUE extends AppCompatActivity {
         location=findViewById(R.id.location);
         price=findViewById(R.id.price);
         save=findViewById(R.id.save);
+        imageView=findViewById(R.id.imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosepic();
+            }
+        });
+
        // FirebaseDatabase database = FirebaseDatabase.getInstance();
         //DatabaseReference myRef = database.getReference("message");
 
@@ -63,21 +86,68 @@ public class ADD_LEAGUE extends AppCompatActivity {
                 if (txt_email.isEmpty() || txt_leagueName.isEmpty() || txt_location.isEmpty() ||txt_personName.isEmpty() ||
                         txt_phoneNo.isEmpty() || txt_price.isEmpty())
                 {
-                    Toast.makeText(ADD_LEAGUE.this, "Some Detials Missing", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ADD_LEAGUE.this, "Some Detials Missed", Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(ADD_LEAGUE.this, "Your Detials Add Sucessfully", Toast.LENGTH_SHORT).show();
 
-                    HashMap<String,Object> map=new HashMap<>();
-                map.put("person name",txt_personName);
-                map.put("league name",txt_leagueName);
-                map.put("phone number",txt_phoneNo);
-                map.put("location",txt_location);
-                map.put("price",txt_price);
-                map.put("email",txt_email);
-                FirebaseDatabase.getInstance().getReference().child("new league").push().setValue(map);
+                    StorageReference fileref=storageReference.child(System.currentTimeMillis() + "." + getFileExtention(imageuri));
+                    fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                     @Override
+                      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                          public void onSuccess(Uri uri) {
 
-            }}
+                            HashMap<String,Object> map=new HashMap<>();
+                            map.put("person name",txt_personName);
+                            map.put("league name",txt_leagueName);
+                            map.put("phone number",txt_phoneNo);
+                            map.put("location",txt_location);
+                            map.put("price",txt_price);
+                            map.put("email",txt_email);
+                            String image=uri.toString();
+                            map.put("image",image);
+                            myRef.push().setValue(map);
+                           // FirebaseDatabase.getInstance().getReference().child("new league").push().setValue(map);
+                        }
+                        });
+                        }
+                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+
+                    Intent ii= new Intent(ADD_LEAGUE.this,MainActivity.class);
+                    startActivity(ii);
+
+
+
+
+
+
+                    // FirebaseDatabase.getInstance().getReference().child("new ground").push().setValue(map);
+
+                }}
         });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -96,6 +166,30 @@ public class ADD_LEAGUE extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void choosepic() {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.setType("image/*");
+        startActivityForResult(i,101);
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if((requestCode==101 && resultCode==RESULT_OK && data!=null)){
+            imageuri=data.getData();
+            imageView.setImageURI(imageuri);
+        }
+    }
+    private String getFileExtention(Uri mUri){
+        ContentResolver cr= getContentResolver();
+        MimeTypeMap mime=MimeTypeMap.getSingleton();
+        return  mime.getExtensionFromMimeType(cr.getType(mUri));
+
     }
 }
 
